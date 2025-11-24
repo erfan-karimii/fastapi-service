@@ -1,0 +1,2 @@
+# fastapi-service
+educational purpose

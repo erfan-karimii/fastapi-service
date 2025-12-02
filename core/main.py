@@ -3,6 +3,7 @@ from fastapi import FastAPI
 import uvicorn
 # from database import Base , engine 
 from tasks.routes import router as tasks_router
+from users.routes import router as users_router
 
 VERSION =  '0.0.1'
 
@@ -16,11 +17,6 @@ tags_metadata = [
         }
     }
 ]
-
-# @asynccontextmanager
-# async def lifespan(app:FastAPI):
-#     Base.metadata.create_all(engine)
-#     yield
     
 
 app = FastAPI(
@@ -42,11 +38,12 @@ app = FastAPI(
     # lifespan=lifespan
 )
 app.include_router(tasks_router)
+app.include_router(users_router)
 
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",       
         host="0.0.0.0",    
-        port=8000,         
+        port=8001,         
         reload=True,       
     )

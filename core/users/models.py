@@ -3,6 +3,9 @@ from core.database import engine
 from sqlalchemy import  String, Boolean , Enum , Index
 from sqlalchemy.orm import Mapped , mapped_column
 from .enums import UserRegisterType 
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class UserModel(BaseModel):
@@ -20,3 +23,9 @@ class UserModel(BaseModel):
 
     def __repr__(self) -> str:
         return f"User(id={self.id}, username={self.username}, email={self.email}, user_register_type={self.user_register_type})"
+    
+    def hash_password(self, password: str) -> None:
+        return pwd_context.hash(password)
+    
+    def verify_password(self, plain_password: str) -> bool:
+        return pwd_context.verify(plain_password, self.password)

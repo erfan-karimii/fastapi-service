@@ -1,7 +1,5 @@
-# from contextlib import asynccontextmanager
 from fastapi import FastAPI 
 import uvicorn
-# from database import Base , engine 
 from tasks.routes import router as tasks_router
 from users.routes import router as users_router
 
@@ -35,7 +33,6 @@ app = FastAPI(
     },
     swagger_ui_parameters={"displayRequestDuration": True},
     openapi_tags=tags_metadata,
-    # lifespan=lifespan
 )
 app.include_router(tasks_router)
 app.include_router(users_router)

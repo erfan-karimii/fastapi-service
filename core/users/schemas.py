@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel , Field , field_validator , EmailStr
+from pydantic import BaseModel , Field , field_validator , EmailStr , ValidationInfo
 from .enums import UserRegisterType
 
 
@@ -22,8 +22,10 @@ class UserCreateSchema(UserBaseSchema):
     password: str = Field(..., min_length=8, max_length=255, description="Password of the user")
     confirm_password: str = Field(..., min_length=8, max_length=255, description="Password confirmation")
 
-    @field_validator("password", mode='after')
-    def validate_password(cls, value: str) -> str:
+    @field_validator("confirm_password", mode='after')
+    def validate_password(cls, value: str,validation:ValidationInfo) -> str:
+        if value != validation.data.get("password"):
+            raise ValueError("Passwords do not match")
         if " " in value:
             raise ValueError("Password must not contain spaces")
         if not any(char.isdigit() for char in value):
@@ -32,6 +34,11 @@ class UserCreateSchema(UserBaseSchema):
             raise ValueError("Password must contain at least one letter")
 
         return value
+
+
+class UserLoginSchema(UserBaseSchema):
+    username: str = Field(..., max_length=50, description="Username of the user")
+    password: str = Field(..., min_length=8, max_length=255, description="Password of the user")
 
 
 class UserUpdateSchema(BaseModel):

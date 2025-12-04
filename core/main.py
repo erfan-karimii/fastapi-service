@@ -37,6 +37,19 @@ app = FastAPI(
 app.include_router(tasks_router)
 app.include_router(users_router)
 
+from sqladmin import Admin 
+from core.base_admin import AdminAuth
+from core.database import engine
+from core.config import settings
+from jinja2 import FileSystemLoader 
+admin = Admin(app, engine,authentication_backend=AdminAuth(secret_key=settings.SQL_ADMIN_SECRET_KEY),templates_dir='./templates/sqladmin')
+
+from users.admin import UserAdmin
+from tasks.admin import TaskAdmin
+admin.add_view(UserAdmin)
+admin.add_view(TaskAdmin)
+
+
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",       

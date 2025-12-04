@@ -2,3 +2,4 @@ fastapi[all]
 alembic
 passlib[bcrypt]
 PyJWT
+sqladmin

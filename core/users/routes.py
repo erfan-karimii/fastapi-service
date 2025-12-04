@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from core.database import get_db
 from core.base_schemas import Base404ErrorSchema
 
+from auth.handler import  sign_jwt 
 from .models import UserModel
 from .schemas import UserResponseSchema , UserCreateSchema , UserUpdateSchema ,UserLoginSchema
 from .enums import UserRegisterType
@@ -24,7 +25,7 @@ router = APIRouter(tags=["Users"], prefix="/users")
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register_user(user_create: UserCreateSchema, db: Session = Depends(get_db)) -> UserResponseSchema:
+async def register_user(user_create: UserCreateSchema, db: Session = Depends(get_db)) -> dict[str, str]:
     stmt = select(UserModel).where(or_(UserModel.email == user_create.email, UserModel.username == user_create.username))
     existing_user = db.execute(stmt).scalar_one_or_none()
     if existing_user:
@@ -39,10 +40,11 @@ async def register_user(user_create: UserCreateSchema, db: Session = Depends(get
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return new_user
+    return sign_jwt(str(new_user.id))
+
 
 @router.post("/login")
-async def login_user(user_create: UserLoginSchema, db: Session = Depends(get_db)) -> None:
+async def login_user(user_create: UserLoginSchema, db: Session = Depends(get_db)) -> dict[str, str]:
     stmt = select(UserModel).where(or_(UserModel.email == user_create.email, UserModel.username == user_create.username))
     existing_user = db.execute(stmt).scalar_one_or_none()
     if not existing_user:
@@ -51,7 +53,7 @@ async def login_user(user_create: UserLoginSchema, db: Session = Depends(get_db)
     if not existing_user.verify_password(user_create.password):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password")
 
-    return {}
+    return sign_jwt(str(existing_user.id))
 
 
 # @router.get("/{user_id}", responses={404: {"model": Base404ErrorSchema}})

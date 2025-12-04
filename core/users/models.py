@@ -1,10 +1,11 @@
-from core.base_model import BaseModel 
-from core.database import engine
-from sqlalchemy import  String, Boolean , Enum , Index
-from sqlalchemy.orm import Mapped , mapped_column
-from .enums import UserRegisterType 
+from sqlalchemy import  String, Boolean , Enum 
+from sqlalchemy.orm import Mapped , mapped_column , relationship
 from passlib.context import CryptContext
-import hashlib
+
+from core.base_model import BaseModel 
+from tasks.models import TaskModel
+from .enums import UserRegisterType 
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -17,6 +18,7 @@ class UserModel(BaseModel):
     user_register_type:Mapped[UserRegisterType] = mapped_column(Enum(UserRegisterType), nullable=False,default=UserRegisterType.USERNAME)
     first_name:Mapped[str] = mapped_column(String(50), nullable=True)
     last_name:Mapped[str] = mapped_column(String(50), nullable=True)
+    tasks:Mapped[list[TaskModel]] = relationship("TaskModel",backref="user")
 
     is_active:Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_verified:Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
@@ -24,6 +26,9 @@ class UserModel(BaseModel):
 
     def __repr__(self) -> str:
         return f"User(id={self.id}, username={self.username}, email={self.email}, user_register_type={self.user_register_type})"
+    
+    def __str__(self):
+        return self.username
     
     def set_password(self, password: str) -> None:
         self.password = pwd_context.hash(password)

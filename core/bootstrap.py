@@ -1,13 +1,15 @@
 from fastapi import FastAPI
-from tasks.routes import router as tasks_router
-from users.routes import router as users_router
+from fastapi.middleware.cors import CORSMiddleware
+
 from sqladmin import Admin 
+
 from core.base_admin import AdminAuth
 from core.database import engine
 from core.config import settings
-
-from users.admin import UserAdmin
+from tasks.routes import router as tasks_router
 from tasks.admin import TaskAdmin
+from users.routes import router as users_router
+from users.admin import UserAdmin
 
 
 def setup_admin(app: FastAPI) -> None:
@@ -19,9 +21,16 @@ def setup_router(app: FastAPI) -> None:
     app.include_router(tasks_router)
     app.include_router(users_router)
 
-def setup_middlewares(app: FastAPI) -> None:
-    pass  
 
+
+def setup_middlewares(app: FastAPI) -> None:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 def setup_app(app):
     setup_admin(app)

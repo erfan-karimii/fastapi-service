@@ -18,7 +18,7 @@ class UserResponseSchema(UserBaseSchema):
     
     
 class UserCreateSchema(UserBaseSchema):
-    username: str = Field(..., max_length=50, description="Username of the user")
+    username: str = Field(..., min_length=1,max_length=50, description="Username of the user")
     password: str = Field(..., min_length=8, max_length=255, description="Password of the user")
     confirm_password: str = Field(..., min_length=8, max_length=255, description="Password confirmation")
 

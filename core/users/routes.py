@@ -26,8 +26,10 @@ router = APIRouter(tags=["Users"], prefix="/users")
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_user(user_create: UserCreateSchema, db: Session = Depends(get_db)) -> dict[str, str]:
+    if not user_create.email:
+        user_create.email = str(user_create.username) + "@localhost.com"
     stmt = select(UserModel).where(or_(UserModel.email == user_create.email, UserModel.username == user_create.username))
-    existing_user = db.execute(stmt).scalar_one_or_none()
+    existing_user = db.execute(stmt).first()
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username or Email already exists")
 

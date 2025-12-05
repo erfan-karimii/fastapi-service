@@ -42,24 +42,24 @@ async def delete_all_tasks(db: Session = Depends(get_db)) -> None:
     return
 
 
-@router.get("/{id}", responses={404: {"model": Base404ErrorSchema}})
+@router.get("/{task_id}", responses={404: {"model": Base404ErrorSchema}})
 async def get_task(
-    id: int = Path(..., gt=0), db: Session = Depends(get_db)
+    task_id: int = Path(..., gt=0), db: Session = Depends(get_db)
 ) -> TaskSchema:
-    stmt = select(TaskModel).where(TaskModel.id == id)
+    stmt = select(TaskModel).where(TaskModel.id == task_id)
     task = db.execute(stmt).scalars().first()
     if task:
         return task
     raise HTTPException(status.HTTP_404_NOT_FOUND, Base404ErrorSchema().detail)
 
 
-@router.put("/{id}", responses={404: {"model": Base404ErrorSchema}})
+@router.put("/{task_id}", responses={404: {"model": Base404ErrorSchema}})
 async def update_task(
     task_data: TaskCreateSchema,
-    id: int = Path(..., gt=0),
+    task_id: int = Path(..., gt=0),
     db: Session = Depends(get_db),
 ) -> TaskSchema:
-    stmt = select(TaskModel).where(TaskModel.id == id)
+    stmt = select(TaskModel).where(TaskModel.id == task_id)
     task = db.execute(stmt).scalars().first()
     if task:
         for key, value in task_data.model_dump().items():
@@ -71,12 +71,12 @@ async def update_task(
 
 
 @router.delete(
-    "/{id}",
+    "/{task_id}",
     responses={404: {"model": Base404ErrorSchema}},
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_task(id: int = Path(..., gt=0), db: Session = Depends(get_db)):
-    stmt = select(TaskModel).where(TaskModel.id == id)
+async def delete_task(task_id: int = Path(..., gt=0), db: Session = Depends(get_db)):
+    stmt = select(TaskModel).where(TaskModel.id == task_id)
     task = db.execute(stmt).scalars().first()
     if task:
         db.delete(task)

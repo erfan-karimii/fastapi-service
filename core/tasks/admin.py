@@ -33,19 +33,27 @@ class TaskAdmin(ModelView, model=TaskModel):
     name = "Task"
     name_plural = "Tasks"
     edit_template = "custom_edit.html"
-    column_list = [TaskModel.id,TaskModel.user_id, TaskModel.title, TaskModel.description, TaskModel.is_completed, TaskModel.created_date, TaskModel.updated_date]
-    form_excluded_columns = [TaskModel.created_date, TaskModel.updated_date,TaskModel.deleted_at]
+    column_list = [
+        TaskModel.id,
+        TaskModel.user_id,
+        TaskModel.title,
+        TaskModel.description,
+        TaskModel.is_completed,
+        TaskModel.created_date,
+        TaskModel.updated_date,
+    ]
+    form_excluded_columns = [
+        TaskModel.created_date,
+        TaskModel.updated_date,
+        TaskModel.deleted_at,
+    ]
     icon = "fa-solid fa-check"
     can_export = True
     page_size = 10
     page_size_options = [1, 10, 25, 50, 100]
-
-
 
     def is_accessible(self, request: Request) -> bool:
         return True
 
     def is_visible(self, request: Request) -> bool:
         return True
-
-

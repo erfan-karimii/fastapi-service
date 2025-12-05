@@ -1,9 +1,10 @@
-from sqladmin import ModelView , action
+from sqladmin import ModelView, action
 
-from sqlalchemy import update 
+from sqlalchemy import update
 from fastapi import Request
 from fastapi.responses import RedirectResponse
 from .models import UserModel
+
 
 class IsVerifiedFilter:
     title = "Is Verified"
@@ -31,36 +32,44 @@ class IsVerifiedFilter:
             return query
 
 
-
 class UserAdmin(ModelView, model=UserModel):
     name = "User"
     name_plural = "Users"
     icon = "fa-solid fa-user"
     can_export = True
-    column_list = [UserModel.id, UserModel.email, UserModel.username, UserModel.is_active, UserModel.is_verified, UserModel.user_register_type]
-    column_searchable_list = [UserModel.username,UserModel.email]
-    column_sortable_list = [UserModel.id,UserModel.username,UserModel.email]
+    column_list = [
+        UserModel.id,
+        UserModel.email,
+        UserModel.username,
+        UserModel.is_active,
+        UserModel.is_verified,
+        UserModel.user_register_type,
+    ]
+    column_searchable_list = [UserModel.username, UserModel.email]
+    column_sortable_list = [UserModel.id, UserModel.username, UserModel.email]
     column_details_exclude_list = [UserModel.password]
-    form_excluded_columns = [UserModel.created_date, UserModel.updated_date,UserModel.deleted_at]
+    form_excluded_columns = [
+        UserModel.created_date,
+        UserModel.updated_date,
+        UserModel.deleted_at,
+    ]
     column_labels = {UserModel.user_register_type: "Registration Type"}
     # column_filters = [IsVerifiedFilter]
     page_size = 10
     page_size_options = [1, 10, 25, 50, 100]
-
 
     def is_accessible(self, request: Request) -> bool:
         return True
 
     def is_visible(self, request: Request) -> bool:
         return True
-    
+
     form_ajax_refs = {
         "tasks": {
             "fields": ("title",),
             "order_by": "id",
         }
     }
-
 
     @action(
         name="verify_users",
@@ -84,5 +93,6 @@ class UserAdmin(ModelView, model=UserModel):
         if referer:
             return RedirectResponse(referer)
         else:
-            return RedirectResponse(request.url_for("admin:list", identity=self.identity))
-
+            return RedirectResponse(
+                request.url_for("admin:list", identity=self.identity)
+            )

@@ -1,7 +1,5 @@
-
 from sqladmin.authentication import AuthenticationBackend
 from fastapi import Request
-
 
 
 class AdminAuth(AuthenticationBackend):
@@ -23,4 +21,3 @@ class AdminAuth(AuthenticationBackend):
             return False
 
         return True
-

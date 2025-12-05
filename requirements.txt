@@ -5,3 +5,4 @@ PyJWT
 sqladmin
 Faker
 flake8
+black

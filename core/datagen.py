@@ -8,7 +8,7 @@ from faker import Faker
 fake = Faker()
 
 
-def seed_users(db:Session) -> UserModel:
+def seed_users(db: Session) -> UserModel:
     user = UserModel(username=fake.user_name())
     user.set_password("12345678")
     db.add(user)
@@ -18,7 +18,7 @@ def seed_users(db:Session) -> UserModel:
     return user
 
 
-def seed_tasks(db:Session, user:UserModel, count:int=10) -> None:
+def seed_tasks(db: Session, user: UserModel, count: int = 10) -> None:
     tasks_list = []
     for _ in range(count):
         tasks_list.append(

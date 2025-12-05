@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from sqladmin import Admin 
+from sqladmin import Admin
 
 from core.base_admin import AdminAuth
 from core.database import engine
@@ -13,14 +13,19 @@ from users.admin import UserAdmin
 
 
 def setup_admin(app: FastAPI) -> None:
-    admin = Admin(app, engine,authentication_backend=AdminAuth(secret_key=settings.SQL_ADMIN_SECRET_KEY),templates_dir='./templates/sqladmin')
+    admin = Admin(
+        app,
+        engine,
+        authentication_backend=AdminAuth(secret_key=settings.SQL_ADMIN_SECRET_KEY),
+        templates_dir="./templates/sqladmin",
+    )
     admin.add_view(UserAdmin)
     admin.add_view(TaskAdmin)
+
 
 def setup_router(app: FastAPI) -> None:
     app.include_router(tasks_router)
     app.include_router(users_router)
-
 
 
 def setup_middlewares(app: FastAPI) -> None:
@@ -31,6 +36,7 @@ def setup_middlewares(app: FastAPI) -> None:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
 
 def setup_app(app):
     setup_admin(app)

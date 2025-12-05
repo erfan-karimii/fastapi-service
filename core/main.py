@@ -1,53 +1,43 @@
 from fastapi import FastAPI 
 import uvicorn
-from tasks.routes import router as tasks_router
-from users.routes import router as users_router
+from bootstrap import setup_app 
 
 VERSION =  '0.0.1'
 
-tags_metadata = [
-    {
-        "name": "Tasks",
-        "description": "Operations with tasks.",
-        "externalDocs": {
-            "description": "Tasks external docs",
-            "url": "https://example.com/tasks-docs"
+FASTAPI_INITIAL_DATA = {
+    "openapi_tags" :  [
+        {
+            "name": "Tasks",
+            "description": "Operations with tasks.",
+            "externalDocs": {
+                "description": "Tasks external docs",
+                "url": "https://example.com/tasks-docs"
+            }
         }
-    }
-]
-    
-
-app = FastAPI(
-    title="TODO App",
-    description="Todo application built with FastAPI",
-    version=VERSION,
-    terms_of_service="http://example.com/terms/",
-    contact={
+    ],
+    "title":"TODO App",
+    "description":"Todo application built with FastAPI",
+    "version":VERSION,
+    "terms_of_service":"http://example.com/terms/",
+    "contact":{
         "name": "erfan karimi",
         "url": "http://x-force.example.com/contact/",
         "email": "dp@x-force.example.com",
     },
-    license_info={
+    "license_info":{
         "name": "MIT License",
         "url": "https://opensource.org/licenses/MIT",
     },
-    swagger_ui_parameters={"displayRequestDuration": True},
-    openapi_tags=tags_metadata,
-)
-app.include_router(tasks_router)
-app.include_router(users_router)
+    "swagger_ui_parameters":{"displayRequestDuration": True},
+}
 
-from sqladmin import Admin 
-from core.base_admin import AdminAuth
-from core.database import engine
-from core.config import settings
-from jinja2 import FileSystemLoader 
-admin = Admin(app, engine,authentication_backend=AdminAuth(secret_key=settings.SQL_ADMIN_SECRET_KEY),templates_dir='./templates/sqladmin')
 
-from users.admin import UserAdmin
-from tasks.admin import TaskAdmin
-admin.add_view(UserAdmin)
-admin.add_view(TaskAdmin)
+def create_app() -> FastAPI:
+    app = FastAPI(**FASTAPI_INITIAL_DATA)
+    setup_app(app)
+    return app
+
+app = create_app()
 
 
 if __name__ == "__main__":

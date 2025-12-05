@@ -4,3 +4,4 @@ passlib[bcrypt]
 PyJWT
 sqladmin
 Faker
+flake8

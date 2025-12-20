@@ -6,3 +6,4 @@ sqladmin
 Faker
 flake8
 black
+pytest

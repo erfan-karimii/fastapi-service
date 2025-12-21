@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 import uvicorn
-from bootstrap import setup_app
+from bootstrap import setup_app , lifespan
 
 VERSION = "0.0.1"
 
@@ -29,6 +29,7 @@ FASTAPI_INITIAL_DATA = {
         "url": "https://opensource.org/licenses/MIT",
     },
     "swagger_ui_parameters": {"displayRequestDuration": True},
+    "lifespan":lifespan
 }
 
 

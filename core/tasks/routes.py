@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Path, HTTPException, status, Query
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
+from fastapi_cache.decorator import cache
 
 from auth.bearer import JWTBearer
 from core.database import get_db
@@ -9,6 +10,14 @@ from .models import TaskModel
 from .schemas import TaskSchema, TaskCreateSchema
 
 router = APIRouter(tags=["Tasks"], prefix="/tasks")
+
+@router.get("/cache/time")
+@cache(expire=2)
+async def cached_time():
+    import time
+    return {
+        "time": time.time(),
+    }
 
 
 @router.get("")

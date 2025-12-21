@@ -7,3 +7,5 @@ Faker
 flake8
 black
 pytest
+APScheduler
+fastapi-cache2
